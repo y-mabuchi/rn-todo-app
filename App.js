@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,7 @@ import {
   TextInput,
   Button,
   KeyboardAvoidingView,
+  AsyncStorage,
 } from "react-native";
 
 const styles = StyleSheet.create({
@@ -39,6 +40,33 @@ const App = () => {
   const [todo, setTodo] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [inputText, setInputText] = React.useState();
+  const TODO = "@todoapp.todo";
+
+  useEffect(() => {
+    loadTodo();
+  }, []);
+
+  const loadTodo = async () => {
+    try {
+      const todoString = await AsyncStorage.getItem(TODO);
+      if (todoString) {
+        const todo = JSON.parse(todoString);
+        setCurrentIndex(todo.length);
+        setTodo(todo);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const saveTodo = async (todo) => {
+    try {
+      const todoString = JSON.stringify(todo);
+      await AsyncStorage.setItem(TODO, todoString);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const onAddItem = () => {
     const title = inputText;
@@ -50,6 +78,7 @@ const App = () => {
     setTodo([...todo, newTodo]);
     setCurrentIndex(index);
     setInputText(null);
+    saveTodo(todo);
   };
 
   return (
