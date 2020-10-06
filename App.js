@@ -75,10 +75,11 @@ const App = () => {
     }
     const index = currentIndex + 1;
     const newTodo = { index: index, title: title, done: false };
-    setTodo([...todo, newTodo]);
+    const todos = [...todo, newTodo];
+    setTodo(todos);
     setCurrentIndex(index);
     setInputText(null);
-    saveTodo(todo);
+    saveTodo(todos);
   };
 
   return (
