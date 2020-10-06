@@ -40,6 +40,8 @@ const App = () => {
   const [todo, setTodo] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [inputText, setInputText] = React.useState();
+  const [filterText, setFilterText] = React.useState();
+  const [filteredTodo, setFilteredTodo] = React.useState([]);
   const TODO = "@todoapp.todo";
 
   useEffect(() => {
@@ -53,6 +55,7 @@ const App = () => {
         const todo = JSON.parse(todoString);
         setCurrentIndex(todo.length);
         setTodo(todo);
+        setFilteredTodo(todo);
       }
     } catch (e) {
       console.log(e);
@@ -68,6 +71,11 @@ const App = () => {
     }
   };
 
+  const filter = (text) => {
+    setFilterText(text);
+    setFilteredTodo(todo.filter((t) => t.title.includes(text)));
+  };
+
   const onAddItem = () => {
     const title = inputText;
     if (title == "") {
@@ -77,19 +85,26 @@ const App = () => {
     const newTodo = { index: index, title: title, done: false };
     const todos = [...todo, newTodo];
     setTodo(todos);
+    setFilteredTodo(todos);
     setCurrentIndex(index);
     setInputText(null);
+    setFilterText(null);
     saveTodo(todos);
   };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.filter}>
-        <Text>Filterがここに配置されます</Text>
+        <TextInput
+          onChangeText={(text) => filter(text)}
+          value={filterText}
+          style={styles.inputText}
+          placeholder="Type filter text"
+        />
       </View>
       <ScrollView style={styles.todolist}>
         <FlatList
-          data={todo}
+          data={filteredTodo}
           renderItem={({ item }) => <Text>{item.title}</Text>}
           keyExtractor={(item, index) => "todo_" + item.index}
         />
