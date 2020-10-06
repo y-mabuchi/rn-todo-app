@@ -1,6 +1,15 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View, ScrollView, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  FlatList,
+  TextInput,
+  Button,
+  KeyboardAvoidingView,
+} from "react-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -16,19 +25,35 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 30,
+    flexDirection: "row",
+  },
+  inputText: {
+    flex: 1,
+  },
+  inputButton: {
+    width: 100,
   },
 });
 
 const App = () => {
-  const todos = [
-    { index: 1, title: "原稿を書く", done: false },
-    { index: 2, title: "犬の散歩をする", done: false },
-  ];
+  const [todo, setTodo] = React.useState([]);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [inputText, setInputText] = React.useState();
 
-  const [todo, setTodo] = React.useState(todos);
+  const onAddItem = () => {
+    const title = inputText;
+    if (title == "") {
+      return;
+    }
+    const index = currentIndex + 1;
+    const newTodo = { index: index, title: title, done: false };
+    setTodo([...todo, newTodo]);
+    setCurrentIndex(index);
+    setInputText(null);
+  };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.filter}>
         <Text>Filterがここに配置されます</Text>
       </View>
@@ -40,9 +65,19 @@ const App = () => {
         />
       </ScrollView>
       <View style={styles.input}>
-        <Text>テキスト入力がここに配置されます</Text>
+        <TextInput
+          onChangeText={(text) => setInputText(text)}
+          value={inputText}
+          style={styles.inputText}
+        />
+        <Button
+          onPress={onAddItem}
+          title="Add"
+          color="#841584"
+          style={styles.inputButton}
+        />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
