@@ -4,21 +4,21 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   FlatList,
   TextInput,
   Button,
-  KeyboardAvoidingView,
   AsyncStorage,
+  TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 20,
   },
   filter: {
+    backgroundColor: "lightgray",
     height: 30,
   },
   todolist: {
@@ -29,10 +29,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   inputText: {
+    backgroundColor: "powderblue",
     flex: 1,
   },
   inputButton: {
+    backgroundColor: "steelblue",
     width: 100,
+  },
+  todoItem: {
+    fontSize: 20,
+    backgroundColor: "white",
+  },
+  todoItemDone: {
+    fontSize: 20,
+    backgroundColor: "red",
   },
 });
 
@@ -92,8 +102,29 @@ const App = () => {
     saveTodo(todos);
   };
 
+  const TodoItem = (props) => {
+    let textStyle = styles.todoItem;
+    if (props.done === true) {
+      textStyle = styles.todoItemDone;
+    }
+    return (
+      <TouchableOpacity onPress={props.onTapTodoItem}>
+        <Text style={textStyle}>{props.title}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const onTapTodoItem = (todoItem) => {
+    console.log(todoItem);
+    const index = todo.indexOf(todoItem);
+    todoItem.done = !todoItem.done;
+    todo[index] = todoItem;
+    setTodo(todo);
+    saveTodo(todo);
+  };
+
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <SafeAreaView style={styles.container}>
       <View style={styles.filter}>
         <TextInput
           onChangeText={(text) => filter(text)}
@@ -105,7 +136,14 @@ const App = () => {
       <FlatList
         style={styles.todolist}
         data={filteredTodo}
-        renderItem={({ item }) => <Text>{item.title}</Text>}
+        extraData={todo}
+        renderItem={({ item }) => (
+          <TodoItem
+            title={item.title}
+            done={item.done}
+            onTapTodoItem={() => onTapTodoItem(item)}
+          />
+        )}
         keyExtractor={(item, index) => "todo_" + item.index}
       />
       <View style={styles.input}>
@@ -121,7 +159,7 @@ const App = () => {
           style={styles.inputButton}
         />
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
