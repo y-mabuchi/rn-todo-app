@@ -102,13 +102,12 @@ const App = () => {
           placeholder="Type filter text"
         />
       </View>
-      <ScrollView style={styles.todolist}>
-        <FlatList
-          data={filteredTodo}
-          renderItem={({ item }) => <Text>{item.title}</Text>}
-          keyExtractor={(item, index) => "todo_" + item.index}
-        />
-      </ScrollView>
+      <FlatList
+        style={styles.todolist}
+        data={filteredTodo}
+        renderItem={({ item }) => <Text>{item.title}</Text>}
+        keyExtractor={(item, index) => "todo_" + item.index}
+      />
       <View style={styles.input}>
         <TextInput
           onChangeText={(text) => setInputText(text)}
