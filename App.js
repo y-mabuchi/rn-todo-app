@@ -56,6 +56,7 @@ const App = () => {
 
   useEffect(() => {
     loadTodo();
+    todo.forEach(t => console.log(t));
   }, []);
 
   const loadTodo = async () => {
