@@ -5,12 +5,19 @@ import {
   Text,
   View,
   FlatList,
-  TextInput,
-  Button,
   AsyncStorage,
   TouchableOpacity,
   SafeAreaView,
+  Platform,
 } from "react-native";
+import {
+  SearchBar,
+  Input,
+  Button,
+  ListItem,
+} from "react-native-elements";
+import Icon from "react-native-vector-icons/Feather";
+import Icon2 from "react-native-vector-icons/MaterialIcons";
 
 const styles = StyleSheet.create({
   container: {
@@ -25,16 +32,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    height: 30,
+    height: 50,
     flexDirection: "row",
+    paddingRight: 10,
   },
   inputText: {
-    backgroundColor: "powderblue",
     flex: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   inputButton: {
-    backgroundColor: "steelblue",
-    width: 100,
+    width: 48,
+    height: 48,
+    borderWidth: 0,
+    borderColor: 'transparent',
+    borderRadius: 48,
+    backgroundColor: "#ff6347",
   },
   todoItem: {
     fontSize: 20,
@@ -52,11 +65,12 @@ const App = () => {
   const [inputText, setInputText] = React.useState();
   const [filterText, setFilterText] = React.useState();
   const [filteredTodo, setFilteredTodo] = React.useState([]);
+  const [selectedId, setSelectedId] = React.useState(null);
   const TODO = "@todoapp.todo";
+  const platform = Platform.OS == "ios" ? "ios" : "android";
 
   useEffect(() => {
     loadTodo();
-    todo.forEach(t => console.log(t));
   }, []);
 
   const loadTodo = async () => {
@@ -103,69 +117,74 @@ const App = () => {
     saveTodo(todos);
   };
 
-  const TodoItem = (props) => {
-    let textStyle = styles.todoItem;
-    if (props.done === true) {
-      textStyle = styles.todoItemDone;
-    }
+  const TodoItem = ({ item, onPress, icon }) => {
     return (
-      <TouchableOpacity onPress={props.onTapTodoItem}>
-        <Text style={textStyle}>{props.title}</Text>
+      <TouchableOpacity onPress={onPress}>
+        <ListItem bottomDivider>
+          <ListItem.Content>
+            <ListItem.Title>{item.title}</ListItem.Title>
+          </ListItem.Content>
+          <Icon2 name={icon}/>
+        </ListItem>
       </TouchableOpacity>
     );
   };
 
   const onTapTodoItem = (todoItem) => {
-    console.log(todoItem);
     const index = todo.indexOf(todoItem);
     todoItem.done = !todoItem.done;
     todo[index] = todoItem;
     setTodo(todo);
     saveTodo(todo);
+    console.log(todoItem);
   };
 
-  const renderItem = ({ item }) => (
-             <TouchableOpacity
-            onPress={() => onTapTodoItem(item)}
-          >
-            <Text>{item.title}</Text>
-          </TouchableOpacity>
-  );
+  const renderItem = ({ item }) => {
+    let icon = item.done ? "done" : null;
+
+    return (
+      <TodoItem
+        item={item}
+        onPress={() => onTapTodoItem(item)}
+        icon={icon}
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.filter}>
-        <TextInput
-          onChangeText={(text) => filter(text)}
-          value={filterText}
-          style={styles.inputText}
-          placeholder="Type filter text"
-        />
-      </View>
+      <SearchBar
+        platform={platform}
+        cancelButtonTitle="Cancel"
+        onChangeText={(text) => filter(text)}
+        onClear={() => setFilterText("")}
+        value={filterText}
+        placeholder="Type filter text"
+      />
       <FlatList
         style={styles.todolist}
         data={filteredTodo}
-        extraData={todo}
-        renderItem={({ item }) => (
-          <TodoItem
-            title={item.title}
-            done={item.done}
-            onTapTodoItem={() => onTapTodoItem(item)}
-          />
-        )}
+        extraData={filteredTodo}
+        renderItem={renderItem}
         keyExtractor={(item, index) => "todo_" + item.index}
       />
       <View style={styles.input}>
-        <TextInput
+        <Input
           onChangeText={(text) => setInputText(text)}
           value={inputText}
-          style={styles.inputText}
+          containerStyle={styles.inputText}
         />
         <Button
+          icon={
+            <Icon
+              name="plus"
+              size={30}
+              color="white"
+            />
+          }
+          title=""
           onPress={onAddItem}
-          title="Add"
-          color="#841584"
-          style={styles.inputButton}
+          buttonStyle={styles.inputButton}
         />
       </View>
     </SafeAreaView>
