@@ -124,6 +124,14 @@ const App = () => {
     saveTodo(todo);
   };
 
+  const renderItem = ({ item }) => (
+             <TouchableOpacity
+            onPress={() => onTapTodoItem(item)}
+          >
+            <Text>{item.title}</Text>
+          </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.filter}>
