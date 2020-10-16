@@ -1,5 +1,7 @@
-import { StatusBar } from "expo-status-bar";
+// React
 import React, { useEffect } from "react";
+
+// React Native Elements
 import {
   StyleSheet,
   Text,
@@ -16,8 +18,14 @@ import {
   Button,
   ListItem,
 } from "react-native-elements";
+
+// Iconをインポート
 import Icon from "react-native-vector-icons/Feather";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
+
+// React Redux
+import { connect } from "react-redux";
+import { addTodo, toggleTodo } from "./actionCreaters";
 
 const styles = StyleSheet.create({
   container: {
@@ -59,7 +67,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const App = () => {
+const TodoScreen = () => {
   const [todo, setTodo] = React.useState([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [inputText, setInputText] = React.useState();
@@ -191,4 +199,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default TodoScreen;
